@@ -1,6 +1,6 @@
 export const getCredential = ():
   | {
-      credential: Credential;
+      credentialId: string;
       publicKey: string;
     }
   | undefined => {
@@ -9,7 +9,7 @@ export const getCredential = ():
 };
 
 export const setCredential = (data: {
-  credential: Credential;
+  credentialId: string;
   publicKey: string;
 }) => {
   localStorage.setItem('credential', JSON.stringify(data));

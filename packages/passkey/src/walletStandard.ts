@@ -1,8 +1,5 @@
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
-import {
-  BrowserPasskeyProvider,
-  PasskeyKeypair,
-} from '@mysten/sui/keypairs/passkey';
+import { PasskeyKeypair } from '@mysten/sui/keypairs/passkey';
 import { Transaction } from '@mysten/sui/transactions';
 import { fromBase64, toBase64 } from '@mysten/sui/utils';
 import {
@@ -26,6 +23,7 @@ import mitt, { Emitter } from 'mitt';
 
 import { getCredential, setCredential } from './localStorage';
 import { parseDerSPKI } from './parseDerSPKI';
+import { PasskeyProvider } from './passkeyProvider';
 
 type WalletEventsMap = {
   [E in keyof StandardEventsListeners]: Parameters<
@@ -43,7 +41,7 @@ export class WalletStandard implements Wallet {
   #accounts: ReadonlyWalletAccount[] = [];
 
   #network: 'mainnet' | 'testnet' | 'devnet';
-  #passkeyProvider: BrowserPasskeyProvider | undefined;
+  #passkeyProvider: PasskeyProvider | undefined;
   #signer: PasskeyKeypair | undefined;
 
   get name() {
@@ -77,7 +75,7 @@ export class WalletStandard implements Wallet {
     this.#events = mitt();
 
     this.#network = network;
-    this.#passkeyProvider = new BrowserPasskeyProvider('Sui Passkey Provider', {
+    this.#passkeyProvider = new PasskeyProvider('Sui Passkey Provider', {
       rp: {
         name: (options && options.name) || 'sui passkey',
         id: (options && options.id) || window.location.hostname,
@@ -118,7 +116,7 @@ export class WalletStandard implements Wallet {
   }
 
   #connect: StandardConnectMethod = async (input) => {
-    const getPasskeyInstance = async (provider: BrowserPasskeyProvider) => {
+    const getPasskeyInstance = async (provider: PasskeyProvider) => {
       const credential = await provider.create();
 
       if (!credential.response.getPublicKey()) {
@@ -129,7 +127,7 @@ export class WalletStandard implements Wallet {
         const pubkey = secp256r1.ProjectivePoint.fromHex(pubkeyUncompressed);
         const pubkeyCompressed = pubkey.toRawBytes(true);
         return {
-          credential,
+          credentialId: credential.id,
           signer: new PasskeyKeypair(pubkeyCompressed, provider),
         };
       }
@@ -165,13 +163,13 @@ export class WalletStandard implements Wallet {
           this.#signer.getPublicKey().toRawBytes(),
         );
       } else {
-        const { signer, credential } = await getPasskeyInstance(
+        const { signer, credentialId } = await getPasskeyInstance(
           this.#passkeyProvider,
         );
         this.#signer = signer;
 
         setCredential({
-          credential,
+          credentialId,
           publicKey: toBase64(signer.getPublicKey().toRawBytes()),
         });
 
