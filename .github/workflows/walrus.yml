@@ -47,6 +47,7 @@ jobs:
         uses: zktx-io/walrus-sites-ga@v0.3.4
         with:
           site-path: '/tmp/demo/dist'
+          object-id: '0xa8b7c575961f004a40b67dbe07c739e899a5d6a7cd7334cf9f6ab9e4568858c1'
           network: 'testnet'
           epochs: 180
           wal-exchange-enabled: false
