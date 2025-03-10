@@ -46,6 +46,7 @@
   "dependencies": {
     "@mysten/sui": "^1.22.0",
     "@mysten/wallet-standard": "^0.13.27",
+    "@noble/curves": "^1.8.1",
     "mitt": "^3.0.1"
   }
 }
