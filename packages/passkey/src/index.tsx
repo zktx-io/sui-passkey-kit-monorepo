@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useRef } from 'react';
 import { registerWallet } from '@mysten/wallet-standard';
 
 import { resetCredential } from './localStorage';
-import { IRpOptions, WalletStandard } from './walletStandard';
+import { IRpOptions, NETWORK, WalletStandard } from './walletStandard';
 
 interface ISuiPasskeyContext {
   reset: () => void;
@@ -16,7 +16,7 @@ export const SuiPasskey = ({
   options,
   children,
 }: {
-  network: 'mainnet' | 'testnet' | 'devnet';
+  network: NETWORK;
   options?: IRpOptions;
   children: React.ReactNode;
 }) => {

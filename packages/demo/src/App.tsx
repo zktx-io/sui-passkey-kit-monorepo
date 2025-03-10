@@ -19,18 +19,17 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [activeNetwork, setActiveNetwork] = useState<
-    'testnet' | 'mainnet' | 'devnet'
-  >(NETWORK);
+  const [activeNetwork, setActiveNetwork] = useState<'testnet' | 'devnet'>(
+    NETWORK,
+  );
   return (
     <SuiPasskey network={activeNetwork}>
       <SuiClientProvider
         networks={{
-          mainnet: { url: getFullnodeUrl('mainnet') },
           testnet: { url: getFullnodeUrl('testnet') },
           devnet: { url: getFullnodeUrl('devnet') },
         }}
-        defaultNetwork={activeNetwork as 'mainnet' | 'testnet' | 'devnet'}
+        defaultNetwork={activeNetwork as 'testnet' | 'devnet'}
         onNetworkChange={(network) => {
           setActiveNetwork(network);
         }}

@@ -36,11 +36,13 @@ export interface IRpOptions {
   id?: string;
 }
 
+export type NETWORK = 'testnet' | 'devnet';
+
 export class WalletStandard implements Wallet {
   readonly #events: Emitter<WalletEventsMap>;
   #accounts: ReadonlyWalletAccount[] = [];
 
-  #network: 'mainnet' | 'testnet' | 'devnet';
+  #network: NETWORK;
   #passkeyProvider: PasskeyProvider | undefined;
   #signer: PasskeyKeypair | undefined;
 
@@ -68,7 +70,7 @@ export class WalletStandard implements Wallet {
     network,
     options,
   }: {
-    network: 'mainnet' | 'testnet' | 'devnet';
+    network: NETWORK;
     options?: IRpOptions;
   }) {
     this.#accounts = [];
