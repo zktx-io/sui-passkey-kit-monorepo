@@ -1,0 +1,55 @@
+name: Deploy Walrus Site using Walrus Sites GA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 
+  
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check if Demo has changed
+        id: demo_changed
+        run: |
+          if git diff --quiet HEAD^ HEAD -- packages/demo; then
+            echo "demo_changed=false" >> $GITHUB_ENV
+          else
+            echo "demo_changed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Copy Demo package to temporary directory
+        if: env.demo_changed == 'true'
+        run: |
+          mkdir -p /tmp/demo
+          cp -r ./packages/demo/* /tmp/demo/
+
+      - name: Install dependencies and Build Demo
+        if: env.demo_changed == 'true'
+        run: |
+          cd /tmp/demo
+          npm install
+          npm run build
+
+      - name: Deploy Demo to Walrus
+        if: env.demo_changed == 'true'
+        uses: zktx-io/walrus-sites-ga@v0.3.4
+        with:
+          site-path: '/tmp/demo/dist'
+          network: 'testnet'
+          epochs: 180
+          wal-exchange-enabled: false
+        env:
+          SUI_ADDRESS: ${{ vars.SUI_ADDRESS_DEMO }}
+          SUI_KEYSTORE: ${{ secrets.SUI_KEYSTORE_DEMO }}
