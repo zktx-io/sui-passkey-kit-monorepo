@@ -5,7 +5,7 @@
     "lint": "eslint 'packages/**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,md}'",
     "dev": "cd packages/demo && npm run dev",
-    "build": "cd packages/sui-passkey && npm run build",
+    "build": "cd packages/passkey && npm run build",
     "version:patch": "lerna version patch",
     "version:minor": "lerna version minor"
   },
