@@ -6,6 +6,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
+import { enqueueSnackbar } from 'notistack';
 
 export const Home = () => {
   const account = useCurrentAccount();
@@ -22,10 +23,24 @@ export const Home = () => {
         { transaction: await transaction.toJSON() },
         {
           onSuccess: ({ digest }) => {
-            console.log('Transaction success', digest);
+            enqueueSnackbar(digest, {
+              variant: 'success',
+              style: {
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+            });
           },
           onError: (error) => {
-            console.error('Transaction error', error);
+            enqueueSnackbar(`${error}`, {
+              variant: 'error',
+              style: {
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+            });
           },
         },
       );
@@ -47,10 +62,10 @@ export const Home = () => {
           <>
             <p>{account?.address}</p>
             <div>
-                <button onClick={handleTransaction}>Transaction</button>
+              <button onClick={handleTransaction}>Transaction</button>
             </div>
             <div>
-                <button onClick={handleDisconnect}>Disconnect</button>
+              <button onClick={handleDisconnect}>Disconnect</button>
             </div>
           </>
         ) : (
