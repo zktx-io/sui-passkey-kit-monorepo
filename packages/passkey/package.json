@@ -1,0 +1,50 @@
+{
+  "name": "@zktx.io/sui-passkey",
+  "version": "0.0.0",
+  "description": "Sui Passkey Wallet Standard React Provider",
+  "keywords": [
+    "sui",
+    "passkey",
+    "wallet standard",
+    "react",
+    "blockchain"
+  ],
+  "license": "ISC",
+  "author": "daoauth",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && rollup -c",
+    "lint": "npm run lint --prefix ../..",
+    "format": "npm run format --prefix ../.."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zktx-io/sui-passkey-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zktx-io/sui-passkey-monorepo/issues"
+  },
+  "homepage": "https://github.com/zktx-io/sui-passkey-monorepo#readme",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.22.0",
+    "@mysten/wallet-standard": "^0.13.27",
+    "mitt": "^3.0.1"
+  }
+}

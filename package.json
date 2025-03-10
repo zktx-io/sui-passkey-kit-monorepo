@@ -2,18 +2,46 @@
   "name": "sui-passkey-monorepo",
   "version": "0.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint 'packages/**/*.{js,jsx,ts,tsx}' --fix",
+    "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "dev": "cd packages/demo && npm run dev",
+    "build": "cd packages/sui-passkey && npm run build",
+    "version:patch": "lerna version patch",
+    "version:minor": "lerna version minor"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zktx-io/sui-passkey-monorepo.git"
   },
-  "keywords": ["sui", "passkey", "blockchain"],
+  "keywords": [
+    "sui",
+    "passkey",
+    "wallet standard",
+    "react",
+    "blockchain"
+  ],
   "author": "daoauth",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/zktx-io/sui-passkey-monorepo/issues"
   },
-  "homepage": "https://github.com/zktx-io/sui-passkey-monorepo#readme"
+  "homepage": "https://github.com/zktx-io/sui-passkey-monorepo#readme",
+  "workspaces": [
+    "packages/passkey",
+    "packages/demo"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.22.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "lerna": "^8.2.1",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.26.0"
+  }
 }
