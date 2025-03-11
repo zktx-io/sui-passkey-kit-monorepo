@@ -7,9 +7,7 @@ import { SuiPasskey } from '@zktx.io/sui-passkey';
 
 import './App.css';
 import '@mysten/dapp-kit/dist/index.css';
-import { Home } from './pages/Home';
-
-const NETWORK = 'devnet';
+import { Home, NETWORK } from './pages/Home';
 
 const router = createBrowserRouter([
   {

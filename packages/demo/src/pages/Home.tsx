@@ -9,6 +9,8 @@ import { Transaction } from '@mysten/sui/transactions';
 import { useSuiPasskey } from '@zktx.io/sui-passkey';
 import { enqueueSnackbar } from 'notistack';
 
+export const NETWORK = 'devnet';
+
 export const Home = () => {
   const account = useCurrentAccount();
 
@@ -60,12 +62,13 @@ export const Home = () => {
   return (
     <>
       <div>
-        <img src="/logo-sui.svg" className="logo sui" alt="React logo" />
+        <img src="/logo-sui.svg" className="logo" />
       </div>
       <h1>Passkey Wallet Standard</h1>
       <div className="card">
         {account && connectionStatus === 'connected' ? (
           <>
+            <p>{NETWORK.toUpperCase()}</p>
             <p>{account?.address}</p>
             <div>
               <button onClick={handleLoad}>Read Data</button>
