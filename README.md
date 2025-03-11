@@ -2,53 +2,62 @@
 
 ![passkey](https://docs.zktx.io/images/sui-passkey.png)
 
-The **Sui Passkey Provider** enables **Passkey wallets** in Dapp-Kit.
+The **Sui Passkey Provider** enables **Passkey wallets** in Sui Dapp-Kit.
 
-With this **React Provider**, developers can seamlessly integrate **Passkey-based wallets** into their dApps. Since it **follows the Wallet Standard**, it ensures a consistent experience not only for developers but also for users, maintaining the same UX as traditional wallets.
+With this **React Provider**, developers can seamlessly integrate **Passkey-based wallets** into their dApps. Because it adheres to the **Wallet Standard**, it provides a consistent experience for both developers and users, maintaining the same UX as traditional wallets.
 
-By leveraging **Passkey**, users can **sign transactions without passwords or seed phrases**, enhancing security while providing a seamless authentication experience based on **WebAuthn**.
+By leveraging **Passkey**, users can sign transactions without passwords or seed phrases, enhancing security while providing a seamless authentication experience based on **WebAuthn**.
+
+---
 
 ## Key Management Considerations
-+ **Passkeys cannot be exported**: A passkey created on one device cannot be manually transferred to another device unless cloud synchronization is enabled.
-+ **Public keys are only available at creation**: The **public key can only be extracted at the time of passkey creation**. When a wallet is first connected, a public key is generated and stored locally. If this public key is lost or deleted, it cannot be recovered, making it impossible to verify ownership of the passkey.
-+ **Local-only passkeys are non-recoverable**: If a passkey is stored only on a single device and the device is lost or reset, recovery is impossible since WebAuthn does not allow private key extraction.
-+ **Cloud-synced passkeys carry risks**: If a user loses access to their cloud account, they may lose access to their wallet. For critical accounts, setting up multiple authenticators is recommended.
-+ **Hardware security keys offer self-custody**: Users preferring full control can use hardware-based passkeys (e.g., YubiKeys) to avoid cloud dependency.
 
-The **Sui Passkey Provider** helps build a **more secure and user-friendly Web3 experience** while ensuring proper key management practices.
+### Passkeys Cannot Be Exported
+A passkey created on one device cannot be manually transferred to another device unless cloud synchronization is enabled.
 
-# Getting started
+### Public Keys Are Only Available at Creation
+The public key is only retrievable during the initial creation of the passkey. This public key is stored locally upon creation. Losing or deleting the stored public key means it cannot be recovered, making verification of passkey ownership impossible.
 
-## Installation
+### Local-Only Passkeys Are Non-Recoverable
+If a passkey is stored only on a single device, and that device is lost or reset, recovery is impossible since WebAuthn does not allow extraction of private keys.
+
+### Cloud-Synced Passkeys Carry Risks
+Users may lose access to their wallet if their cloud account is compromised. It is advisable to set up multiple authenticators for critical accounts.
+
+### Hardware Security Keys Provide Self-Custody
+Users preferring complete control can use hardware-based passkeys (e.g., YubiKeys) to avoid cloud dependency.
+
+---
+
+## React Provider Usage
+
+### Installation
 
 ```bash
-npm install @zktx.io/sui-passkey
+npm install @zktx/passkey-provider
 ```
 
-## Usage
-```typescript
-import { SuiPasskey } from '@zktx.io/sui-passkey';
+### Basic Example
 
-const NETWORK = 'testnet';
+```tsx
+import { SuiPasskey } from '@zktx/passkey-provider';
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui.js/client';
 
 function App() {
-  const [activeNetwork, setActiveNetwork] = useState<'testnet' | 'devnet'>(
-    NETWORK,
-  );
+  const NETWORK = 'testnet';
+
   return (
-    <SuiPasskey network={activeNetwork}>
+    <SuiPasskey network={NETWORK}>
       <SuiClientProvider
         networks={{
           testnet: { url: getFullnodeUrl('testnet') },
           devnet: { url: getFullnodeUrl('devnet') },
         }}
-        defaultNetwork={activeNetwork as 'testnet' | 'devnet'}
-        onNetworkChange={(network) => {
-          setActiveNetwork(network);
-        }}
+        defaultNetwork={NETWORK}
       >
-        <WalletProvider autoConnect>
-          <RouterProvider router={router} />
+        <WalletProvider>
+          {/* Your App Components Here */}
         </WalletProvider>
       </SuiClientProvider>
     </SuiPasskey>
@@ -58,6 +67,85 @@ function App() {
 export default App;
 ```
 
-## SuiPasskey Props
+---
 
-* network: **Testnet**, and **Devnet**.
+## Provider Hooks
+
+### `useSuiPasskey`
+
+```typescript
+import { useDisconnectWallet } from '@mysten/dapp-kit';
+import { useSuiPasskey } from '@zktx.io/sui-passkey';
+
+export const Home = () => {
+
+  const { mutate: disconnect } = useDisconnectWallet();
+  const { read, write, reset } = useSuiPasskey();
+
+  const handleLoad = () => {
+    console.log(read());
+    /*
+      {
+          rp: {
+            name: 'localhost',
+            id: 'localhost',
+          },
+          user: {
+            name: '...',
+            displayName: 'Sui Passkey',
+          },
+          credentialId: '...',
+          publicKey: '...',
+        }
+    */
+  }
+
+  const handleWrite = () => {
+    write({
+    rp: {
+      name: 'localhost',
+      id: 'localhost',
+    },
+    user: {
+      name: '...',
+      displayName: 'Sui Passkey',
+    },
+    credentialId: '...',
+    publicKey: '...',
+  })
+    disconnect();
+  }
+
+  const handleReset = () => {
+    reset();
+    disconnect();
+  }
+
+  const handleDisconnect = () => {
+    disconnect();
+  }
+
+  return <>
+    <div>
+      <button onClick={handleLoad}>Read Data</button>
+      <button onClick={handleWrite}>Write Data</button>
+      <button onClick={handleReset}>Reset Data</button>
+      <button onClick={handleDisconnect}>Disconnect</button>
+    </div>
+  </>
+}
+```
+
+This hook provides methods to manage Passkey data:
+
+- **`read()`**: Retrieves the stored Passkey data, including the public key and credential details.
+- **`write(data)`**: Stores Passkey data locally. Ensure the public key is securely stored; overwriting or deleting this key makes recovery impossible.
+- **`reset()`**: Permanently clears all stored Passkey data. Executing this action deletes the data irreversibly.
+
+---
+
+## Important Security Considerations
+- Executing **`reset()`** permanently deletes stored Passkey data.
+- Always securely store and back up the public key obtained at the initial creation of the passkey to prevent irreversible loss.
+
+The **Sui Passkey Provider** facilitates a secure and user-friendly Web3 experience while ensuring proper key management practices.

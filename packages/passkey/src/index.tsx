@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 
 import { registerWallet } from '@mysten/wallet-standard';
 
@@ -11,12 +11,14 @@ import {
 import { NETWORK, WalletStandard } from './walletStandard';
 
 interface ISuiPasskeyContext {
-  export: () => ISuiPasskeyData | undefined;
-  import: (data: ISuiPasskeyData) => void;
+  read: () => ISuiPasskeyData | undefined;
+  write: (data: ISuiPasskeyData) => void;
   reset: () => void;
 }
 
-const PasskeyContext = createContext<ISuiPasskeyContext | undefined>(undefined);
+const SuiPasskeyContext = createContext<ISuiPasskeyContext | undefined>(
+  undefined,
+);
 
 export const SuiPasskey = ({
   network,
@@ -34,12 +36,12 @@ export const SuiPasskey = ({
     }
   }, [network]);
   return (
-    <PasskeyContext.Provider
+    <SuiPasskeyContext.Provider
       value={{
-        export: () => {
+        read: () => {
           return getCredential();
         },
-        import: (data: ISuiPasskeyData) => {
+        write: (data: ISuiPasskeyData) => {
           setCredential(data);
         },
         reset: () => {
@@ -48,6 +50,14 @@ export const SuiPasskey = ({
       }}
     >
       {children}
-    </PasskeyContext.Provider>
+    </SuiPasskeyContext.Provider>
   );
+};
+
+export const useSuiPasskey = () => {
+  const context = useContext(SuiPasskeyContext);
+  if (!context) {
+    throw new Error('useSuiPasskey must be used within a SuiPasskeyProvider');
+  }
+  return context;
 };
