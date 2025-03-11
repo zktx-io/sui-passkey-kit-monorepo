@@ -6,6 +6,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
+import { useSuiPasskey } from '@zktx.io/sui-passkey';
 import { enqueueSnackbar } from 'notistack';
 
 export const Home = () => {
@@ -14,6 +15,7 @@ export const Home = () => {
   const { connectionStatus } = useCurrentWallet();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { mutate: disconnect } = useDisconnectWallet();
+  const { read } = useSuiPasskey();
 
   const handleTransaction = async () => {
     if (account) {
@@ -47,6 +49,10 @@ export const Home = () => {
     }
   };
 
+  const handleLoad = () => {
+    console.log(read());
+  };
+
   const handleDisconnect = () => {
     disconnect();
   };
@@ -61,6 +67,9 @@ export const Home = () => {
         {account && connectionStatus === 'connected' ? (
           <>
             <p>{account?.address}</p>
+            <div>
+              <button onClick={handleLoad}>Read Data</button>
+            </div>
             <div>
               <button onClick={handleTransaction}>Transaction</button>
             </div>
