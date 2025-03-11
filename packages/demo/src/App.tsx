@@ -9,7 +9,7 @@ import './App.css';
 import '@mysten/dapp-kit/dist/index.css';
 import { Home } from './pages/Home';
 
-const NETWORK = 'testnet';
+const NETWORK = 'devnet';
 
 const router = createBrowserRouter([
   {
