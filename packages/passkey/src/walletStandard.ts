@@ -31,11 +31,6 @@ type WalletEventsMap = {
   >[0];
 };
 
-export interface IRpOptions {
-  name?: string;
-  id?: string;
-}
-
 export type NETWORK = 'testnet' | 'devnet';
 
 export class WalletStandard implements Wallet {
@@ -66,23 +61,12 @@ export class WalletStandard implements Wallet {
     return this.#accounts;
   }
 
-  constructor({
-    network,
-    options,
-  }: {
-    network: NETWORK;
-    options?: IRpOptions;
-  }) {
+  constructor({ network }: { network: NETWORK }) {
     this.#accounts = [];
     this.#events = mitt();
 
     this.#network = network;
-    this.#passkeyProvider = new PasskeyProvider('Sui Passkey Provider', {
-      rp: {
-        name: (options && options.name) || 'sui passkey',
-        id: (options && options.id) || window.location.hostname,
-      },
-    });
+    this.#passkeyProvider = new PasskeyProvider('Sui Passkey');
   }
 
   get features(): StandardConnectFeature &
@@ -119,8 +103,7 @@ export class WalletStandard implements Wallet {
 
   #connect: StandardConnectMethod = async (input) => {
     const getPasskeyInstance = async (provider: PasskeyProvider) => {
-      const credential = await provider.create();
-
+      const { rp, user, credential } = await provider.create2();
       if (!credential.response.getPublicKey()) {
         throw new Error('Invalid credential create response');
       } else {
@@ -129,6 +112,8 @@ export class WalletStandard implements Wallet {
         const pubkey = secp256r1.ProjectivePoint.fromHex(pubkeyUncompressed);
         const pubkeyCompressed = pubkey.toRawBytes(true);
         return {
+          rp,
+          user,
           credentialId: credential.id,
           signer: new PasskeyKeypair(pubkeyCompressed, provider),
         };
@@ -165,12 +150,14 @@ export class WalletStandard implements Wallet {
           this.#signer.getPublicKey().toRawBytes(),
         );
       } else {
-        const { signer, credentialId } = await getPasskeyInstance(
+        const { rp, user, signer, credentialId } = await getPasskeyInstance(
           this.#passkeyProvider,
         );
         this.#signer = signer;
 
         setCredential({
+          rp,
+          user,
           credentialId,
           publicKey: toBase64(signer.getPublicKey().toRawBytes()),
         });

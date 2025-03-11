@@ -1,10 +1,7 @@
 // https://github.com/MystenLabs/ts-sdks/blob/main/packages/typescript/src/keypairs/passkey/keypair.ts
 
-import {
-  BrowserPasswordProviderOptions,
-  PasskeyProvider as Provider,
-} from '@mysten/sui/keypairs/passkey';
-import { fromBase64 } from '@mysten/sui/utils';
+import { PasskeyProvider as Provider } from '@mysten/sui/keypairs/passkey';
+import { fromBase64, toBase58 } from '@mysten/sui/utils';
 import { randomBytes } from '@noble/hashes/utils';
 
 import { getCredential } from './localStorage';
@@ -17,40 +14,59 @@ interface RegistrationCredential extends PublicKeyCredential {
 }
 
 export class PasskeyProvider implements Provider {
-  #name: string;
-  #options: BrowserPasswordProviderOptions;
+  #displayName: string;
 
-  constructor(name: string, options: BrowserPasswordProviderOptions) {
-    this.#name = name;
-    this.#options = options;
+  constructor(displayName: string) {
+    this.#displayName = displayName;
   }
 
   async create(): Promise<RegistrationCredential> {
-    return (await navigator.credentials.create({
+    throw new Error('Method not implemented.');
+  }
+
+  async create2(): Promise<{
+    rp: {
+      name: string;
+      id: string;
+    };
+    user: {
+      name: string;
+      displayName: string;
+    };
+    credential: RegistrationCredential;
+  }> {
+    const rp = {
+      name: window.location.hostname,
+      id: window.location.hostname,
+    };
+    const user = {
+      id: randomBytes(16),
+      name: toBase58(randomBytes(4)),
+      displayName: this.#displayName,
+    };
+    const credential = (await navigator.credentials.create({
       publicKey: {
-        timeout: this.#options.timeout ?? 60000,
-        ...this.#options,
-        rp: {
-          name: this.#name,
-          ...this.#options.rp,
-        },
-        user: {
-          name: this.#name,
-          displayName: this.#name,
-          ...this.#options.user,
-          id: randomBytes(10),
-        },
+        timeout: 60000,
+        rp,
+        user,
         challenge: new TextEncoder().encode('Create passkey wallet on Sui'),
         pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
         authenticatorSelection: {
           authenticatorAttachment: 'cross-platform',
           residentKey: 'required',
           requireResidentKey: true,
-          userVerification: 'preferred',
-          ...this.#options.authenticatorSelection,
+          userVerification: 'required',
         },
       },
     })) as RegistrationCredential;
+    return {
+      rp,
+      user: {
+        name: user.name,
+        displayName: user.displayName,
+      },
+      credential,
+    };
   }
 
   async get(challenge: Uint8Array): Promise<AuthenticationCredential> {
@@ -59,10 +75,8 @@ export class PasskeyProvider implements Provider {
       return (await navigator.credentials.get({
         publicKey: {
           challenge,
-          userVerification:
-            this.#options.authenticatorSelection?.userVerification ||
-            'required',
-          timeout: this.#options.timeout ?? 60000,
+          userVerification: 'required',
+          timeout: 60000,
           allowCredentials: [
             {
               type: 'public-key',
