@@ -26,5 +26,5 @@ jobs:
             access: public
             provenance: true
             token: ${{ secrets.NPM_TOKEN }}
-            package: "packages/passkey/package.json"
+            package: "packages/passkey-kit/package.json"
             strategy: upgrade
