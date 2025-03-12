@@ -6,7 +6,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { useSuiPasskey } from '@zktx.io/sui-passkey';
+import { useSuiPasskey } from '@zktx.io/sui-passkey-kit';
 import { enqueueSnackbar } from 'notistack';
 
 export const NETWORK = 'devnet';

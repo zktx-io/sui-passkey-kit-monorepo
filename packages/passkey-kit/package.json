@@ -1,5 +1,5 @@
 {
-  "name": "@zktx.io/sui-passkey",
+  "name": "@zktx.io/sui-passkey-kit",
   "version": "0.0.5",
   "description": "Sui Passkey Wallet Standard React Provider",
   "keywords": [
@@ -23,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zktx-io/sui-passkey-monorepo.git"
+    "url": "git+https://github.com/zktx-io/sui-passkey-kit-monorepo.git"
   },
   "bugs": {
-    "url": "https://github.com/zktx-io/sui-passkey-monorepo/issues"
+    "url": "https://github.com/zktx-io/sui-passkey-kit-monorepo/issues"
   },
-  "homepage": "https://github.com/zktx-io/sui-passkey-monorepo#readme",
+  "homepage": "https://github.com/zktx-io/sui-passkey-kit-monorepo#readme",
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"

@@ -1,16 +1,16 @@
 {
-  "name": "sui-passkey-monorepo",
+  "name": "sui-passkey-kit-monorepo",
   "scripts": {
     "lint": "eslint 'packages/**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier --write 'packages/**/*.{js,jsx,ts,tsx,json,css,md}'",
     "dev": "cd packages/demo && npm run dev",
-    "build": "cd packages/passkey && npm run build",
+    "build": "cd packages/passkey-kit && npm run build",
     "version:patch": "lerna version patch",
     "version:minor": "lerna version minor"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zktx-io/sui-passkey-monorepo.git"
+    "url": "git+https://github.com/zktx-io/sui-passkey-kit-monorepo.git"
   },
   "keywords": [
     "sui",
@@ -23,11 +23,11 @@
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/zktx-io/sui-passkey-monorepo/issues"
+    "url": "https://github.com/zktx-io/sui-passkey-kit-monorepo/issues"
   },
-  "homepage": "https://github.com/zktx-io/sui-passkey-monorepo#readme",
+  "homepage": "https://github.com/zktx-io/sui-passkey-kit-monorepo#readme",
   "workspaces": [
-    "packages/passkey",
+    "packages/passkey-kit",
     "packages/demo"
   ],
   "devDependencies": {

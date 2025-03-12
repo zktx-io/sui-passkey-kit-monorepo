@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { getFullnodeUrl } from '@mysten/sui/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { SuiPasskey } from '@zktx.io/sui-passkey';
+import { SuiPasskey } from '@zktx.io/sui-passkey-kit';
 
 import './App.css';
 import '@mysten/dapp-kit/dist/index.css';
