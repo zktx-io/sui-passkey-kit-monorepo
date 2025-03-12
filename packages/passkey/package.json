@@ -1,6 +1,6 @@
 {
   "name": "@zktx.io/sui-passkey",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Sui Passkey Wallet Standard React Provider",
   "keywords": [
     "sui",
