@@ -20,6 +20,7 @@ import { PasskeyPublicKey } from '@mysten/sui/keypairs/passkey';
 import { NETWORK } from '../config';
 import { IntentScope } from '@mysten/sui/cryptography';
 import { useWalrusWallet } from '@zktx.io/walrus-wallet';
+import { useEffect, useState } from 'react';
 
 export const Home = () => {
   const account = useCurrentAccount();
@@ -145,6 +146,40 @@ export const Home = () => {
     disconnect();
   };
 
+  const TruncatedAddress = ({ address }: { address: string }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    if (!address) return null;
+
+    const truncatedAddress = isMobile
+      ? `${address.slice(0, 6)}...${address.slice(-4)}`
+      : address;
+
+    return (
+      <div className="address-wrapper">
+        <p className="address-text">{truncatedAddress}</p>
+        <button
+          className="copy-btn"
+          onClick={() => {
+            navigator.clipboard.writeText(address);
+            enqueueSnackbar('Address copied', { variant: 'success' });
+          }}
+        >
+          Copy Address
+        </button>
+      </div>
+    );
+  };
+
   return (
     <>
       <div>
@@ -155,7 +190,7 @@ export const Home = () => {
         {account && connectionStatus === 'connected' ? (
           <>
             <p>{NETWORK.toUpperCase()}</p>
-            <p>{account?.address}</p>
+            <TruncatedAddress address={account.address} />
             <div>
               <button onClick={handleLoad}>Read Data</button>
             </div>
