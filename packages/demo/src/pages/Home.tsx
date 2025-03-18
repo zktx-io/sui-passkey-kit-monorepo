@@ -16,11 +16,12 @@ import { Secp256r1PublicKey } from '@mysten/sui/keypairs/secp256r1';
 import { ZkLoginPublicIdentifier } from '@mysten/sui/zklogin';
 import { MultiSigPublicKey } from '@mysten/sui/multisig';
 import { PasskeyPublicKey } from '@mysten/sui/keypairs/passkey';
+import { FiCopy } from 'react-icons/fi';
+import { MdDownload } from 'react-icons/md';
 
 import { NETWORK } from '../config';
 import { IntentScope } from '@mysten/sui/cryptography';
 import { useWalrusWallet } from '@zktx.io/walrus-wallet';
-import { useEffect, useState } from 'react';
 
 export const Home = () => {
   const account = useCurrentAccount();
@@ -219,62 +220,57 @@ export const Home = () => {
     fileInput.click();
   };
 
-  const TruncatedAddress = ({ address }: { address: string }) => {
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-    useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth <= 768);
-      };
-
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    if (!address) return null;
-
-    const truncatedAddress = isMobile
-      ? `${address.slice(0, 6)}...${address.slice(-4)}`
-      : address;
-
-    return (
-      <div className="address-wrapper">
-        <p className="address-text">{truncatedAddress}</p>
-        <button
-          className="copy-btn"
-          onClick={() => {
-            navigator.clipboard.writeText(address);
-            enqueueSnackbar('Address copied', { variant: 'success' });
-          }}
-        >
-          Copy Address
-        </button>
-      </div>
-    );
-  };
-
   return (
-    <>
+    <div className="flex flex-col items-center p-4">
       <div>
-        <img src="/logo-sui.svg" className="logo" />
+        <img src={'/logo-sui.svg'} className="w-32 h-32 mb-4" alt="logo" />
       </div>
-      <h1>Passkey Wallet Standard</h1>
-      <div className="card">
+      <h1 className="text-3xl font-bold">Passkey Wallet Standard</h1>
+      <div className="max-w-md p-4 rounded-lg shadow-md mt-4">
         {account && connectionStatus === 'connected' ? (
           <div>
             <p>{NETWORK.toUpperCase()}</p>
-            <TruncatedAddress address={account.address} />
-            <div>
-              <button onClick={handleBackup}>Backup Data</button>
+            <div className="flex items-center justify-between bg-white p-2 rounded-lg shadow-sm">
+              <p className="text-gray-700 font-mono text-sm mr-4">
+                {`${account.address.slice(0, 6)}...${account.address.slice(-4)}`}
+              </p>
+              <button
+                className="p-1 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => {
+                  navigator.clipboard.writeText(account.address);
+                  enqueueSnackbar('Address copied', { variant: 'success' });
+                }}
+              >
+                <FiCopy className="w-5 h-5 text-gray-600" />
+              </button>
+              <button
+                className="p-1 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={handleBackup}
+              >
+                <MdDownload className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
-            <div>
-              <button onClick={handleTransaction}>Transaction</button>
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={handleTransaction}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Test Tx
+              </button>
+              <button
+                onClick={handleScan}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Scan
+              </button>
             </div>
-            <div>
-              <button onClick={handleScan}>Scan</button>
-            </div>
-            <div>
-              <button onClick={handleDisconnect}>Disconnect</button>
+            <div className="mt-3">
+              <button
+                onClick={handleDisconnect}
+                className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Disconnect
+              </button>
             </div>
           </div>
         ) : (
@@ -286,13 +282,16 @@ export const Home = () => {
               alignItems: 'center',
             }}
           >
-            <div>
-              <button onClick={handleRestore}>Restore Data</button>
-            </div>
+            <button
+              className="w-full bg-blue-500 text-white py-2 px-2 rounded-lg cursor-pointer"
+              onClick={handleRestore}
+            >
+              Restore Data
+            </button>
             <ConnectButton />
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
