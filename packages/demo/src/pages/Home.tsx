@@ -30,7 +30,7 @@ export const Home = () => {
   const { mutate: signPersonalMessage } = useSignPersonalMessage();
   const { mutate: signTransaction } = useSignTransaction();
   const { mutate: disconnect } = useDisconnectWallet();
-  const { read } = useSuiPasskey();
+  const { read, write } = useSuiPasskey();
   const { scan } = useWalrusWallet();
 
   const handleTransaction = async () => {
@@ -174,6 +174,51 @@ export const Home = () => {
     disconnect();
   };
 
+  const handleRestore = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+
+    fileInput.onchange = (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target.files || target.files.length === 0) {
+        return;
+      }
+
+      const file = target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const contents = e.target?.result as string;
+          const jsonData = JSON.parse(contents);
+
+          if (!jsonData) {
+            enqueueSnackbar('Invalid backup file format', { variant: 'error' });
+            return;
+          }
+
+          write(jsonData);
+
+          enqueueSnackbar('Wallet data restored successfully', {
+            variant: 'success',
+          });
+        } catch (error) {
+          console.error('Restore failed:', error);
+          enqueueSnackbar(`Failed to restore: ${error}`, { variant: 'error' });
+        }
+      };
+
+      reader.onerror = () => {
+        enqueueSnackbar('Error reading file', { variant: 'error' });
+      };
+
+      reader.readAsText(file);
+    };
+
+    fileInput.click();
+  };
+
   const TruncatedAddress = ({ address }: { address: string }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -216,7 +261,7 @@ export const Home = () => {
       <h1>Passkey Wallet Standard</h1>
       <div className="card">
         {account && connectionStatus === 'connected' ? (
-          <>
+          <div>
             <p>{NETWORK.toUpperCase()}</p>
             <TruncatedAddress address={account.address} />
             <div>
@@ -231,9 +276,21 @@ export const Home = () => {
             <div>
               <button onClick={handleDisconnect}>Disconnect</button>
             </div>
-          </>
+          </div>
         ) : (
-          <ConnectButton />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <button onClick={handleRestore}>Restore Data</button>
+            </div>
+            <ConnectButton />
+          </div>
         )}
       </div>
     </>
