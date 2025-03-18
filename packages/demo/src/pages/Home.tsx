@@ -138,8 +138,36 @@ export const Home = () => {
     }
   };
 
-  const handleLoad = () => {
-    console.log(read());
+  const handleBackup = () => {
+    try {
+      const backupData = read();
+
+      if (!backupData) {
+        enqueueSnackbar('No data available to backup', { variant: 'warning' });
+        return;
+      }
+
+      const jsonData = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.href = url;
+      link.download = `sui-wallet-backup-${new Date().toISOString().split('T')[0]}.json`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+      enqueueSnackbar('Backup file downloaded successfully', {
+        variant: 'success',
+      });
+    } catch (error) {
+      console.error('Backup failed:', error);
+      enqueueSnackbar(`Backup failed: ${error}`, { variant: 'error' });
+    }
   };
 
   const handleDisconnect = () => {
@@ -192,7 +220,7 @@ export const Home = () => {
             <p>{NETWORK.toUpperCase()}</p>
             <TruncatedAddress address={account.address} />
             <div>
-              <button onClick={handleLoad}>Read Data</button>
+              <button onClick={handleBackup}>Backup Data</button>
             </div>
             <div>
               <button onClick={handleTransaction}>Transaction</button>
