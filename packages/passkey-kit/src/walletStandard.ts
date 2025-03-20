@@ -147,7 +147,7 @@ export class WalletStandard implements Wallet {
         );
         return updateAccount(
           this.#signer.toSuiAddress(),
-          this.#signer.getPublicKey().toRawBytes(),
+          this.#signer.getPublicKey().toSuiBytes(),
         );
       } else {
         const { rp, user, signer, credentialId } = await getPasskeyInstance(
@@ -164,7 +164,7 @@ export class WalletStandard implements Wallet {
 
         return updateAccount(
           this.#signer.toSuiAddress(),
-          this.#signer.getPublicKey().toRawBytes(),
+          this.#signer.getPublicKey().toSuiBytes(),
         );
       }
     }
