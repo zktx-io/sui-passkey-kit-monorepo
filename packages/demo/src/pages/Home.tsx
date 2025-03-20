@@ -16,12 +16,12 @@ import { Secp256r1PublicKey } from '@mysten/sui/keypairs/secp256r1';
 import { ZkLoginPublicIdentifier } from '@mysten/sui/zklogin';
 import { MultiSigPublicKey } from '@mysten/sui/multisig';
 import { PasskeyPublicKey } from '@mysten/sui/keypairs/passkey';
+import { IntentScope } from '@mysten/sui/cryptography';
+import { useWalrusScan } from '@zktx.io/walrus-scan';
 import { FiCopy } from 'react-icons/fi';
 import { MdDownload } from 'react-icons/md';
 
 import { NETWORK } from '../config';
-import { IntentScope } from '@mysten/sui/cryptography';
-import { useWalrusWallet } from '@zktx.io/walrus-wallet';
 
 export const Home = () => {
   const account = useCurrentAccount();
@@ -32,7 +32,7 @@ export const Home = () => {
   const { mutate: signTransaction } = useSignTransaction();
   const { mutate: disconnect } = useDisconnectWallet();
   const { read, write } = useSuiPasskey();
-  const { scan } = useWalrusWallet();
+  const { scan } = useWalrusScan();
 
   const handleTransaction = async () => {
     if (account) {
@@ -81,7 +81,7 @@ export const Home = () => {
             case 0x03:
               return new MultiSigPublicKey(account.publicKey.slice(1));
             case 0x05:
-              return new ZkLoginPublicIdentifier(account.publicKey);
+              return new ZkLoginPublicIdentifier(account.publicKey.slice(1));
             case 0x06:
               return new PasskeyPublicKey(account.publicKey.slice(1));
             default:

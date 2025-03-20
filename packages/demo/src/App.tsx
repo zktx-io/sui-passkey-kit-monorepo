@@ -4,13 +4,13 @@ import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { getFullnodeUrl } from '@mysten/sui/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { SuiPasskey } from '@zktx.io/sui-passkey-kit';
-import { WalrusWallet } from '@zktx.io/walrus-wallet';
+import { WalrusScan } from '@zktx.io/walrus-scan';
+import { enqueueSnackbar } from 'notistack';
 
 import './App.css';
 import '@mysten/dapp-kit/dist/index.css';
 import { Home } from './pages/Home';
-import { ICON, NETWORK, WALLET_NAME } from './config';
-import { enqueueSnackbar } from 'notistack';
+import { ICON, NETWORK } from './config';
 
 const router = createBrowserRouter([
   {
@@ -24,10 +24,9 @@ function App() {
     NETWORK,
   );
   return (
-    <WalrusWallet
-      name={WALLET_NAME}
+    <WalrusScan
+      network={NETWORK}
       icon={ICON}
-      network={activeNetwork}
       onEvent={(notification) => {
         enqueueSnackbar(notification.message, {
           variant: notification.variant,
@@ -55,7 +54,7 @@ function App() {
           </WalletProvider>
         </SuiClientProvider>
       </SuiPasskey>
-    </WalrusWallet>
+    </WalrusScan>
   );
 }
 
